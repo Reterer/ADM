@@ -1,39 +1,43 @@
-import networkx as nx
-from fa2 import ForceAtlas2
-import matplotlib.pyplot as plt
+import pandas as pd
+from collections import Counter
+from nltk import ngrams, word_tokenize
+import nltk
 
-G = nx.random_geometric_graph(400, 0.2)
+import re
+import math
 
-forceatlas2 = ForceAtlas2(
-    # Behavior alternatives
-    outboundAttractionDistribution=True,  # Dissuade hubs
-    linLogMode=False,  # NOT IMPLEMENTED
-    adjustSizes=False,  # Prevent overlap (NOT IMPLEMENTED)
-    edgeWeightInfluence=1.0,
-    # Performance
-    jitterTolerance=1.0,  # Tolerance
-    barnesHutOptimize=True,
-    barnesHutTheta=1.2,
-    multiThreaded=False,  # NOT IMPLEMENTED
-    # Tuning
-    scalingRatio=2.0,
-    strongGravityMode=False,
-    gravity=1.0,
-    # Log
-    verbose=True,
-)
+nltk.download("punkt")
+# Загружаем данные из CSV-файла
+df = pd.read_csv("vacancies.csv")
+df = df[df.job_name == "Водитель"]
 
-positions = forceatlas2.forceatlas2_networkx_layout(G, pos=None, iterations=2000)
-nx.draw_networkx_nodes(
-    G, positions, node_size=20, with_labels=False, node_color="blue", alpha=0.4
-)
-nx.draw_networkx_edges(G, positions, edge_color="green", alpha=0.05)
-plt.axis("off")
-plt.show()
+# Удаляем строки с пустым значением в поле duty
+df = df.dropna(subset=["requirement_qualification"])
+df.drop_duplicates(subset=["requirement_qualification"], inplace=True)
 
-# equivalently
-import igraph
 
-G = igraph.Graph.TupleList(G.edges(), directed=False)
-layout = forceatlas2.forceatlas2_igraph_layout(G, pos=None, iterations=2000)
-igraph.plot(G, layout).show()
+# Обработка текстового поля duty
+def clean_text(text):
+    text = re.sub(r"[^а-яА-ЯёЁ\s]", "", text)  # Удаляем знаки препинания
+    text = text.lower()  # Приводим к нижнему регистру
+    return text
+
+
+df["requirement_qualification"] = df["requirement_qualification"].apply(clean_text)
+
+# Создаем список из токенов
+token_list = [word_tokenize(duty) for duty in df["requirement_qualification"]]
+
+for n in range(1, 4):
+    # Создаем n-граммы
+    ngram_list = [ngrams(token, n) for token in token_list]
+
+    # Считаем частотность n-грамм
+    ngram_counter = Counter([ngram for ngrams in ngram_list for ngram in ngrams])
+
+    sorted_ngrams = sorted(ngram_counter.items(), key=lambda x: x[1], reverse=True)
+
+    # Выводим топ-10 n-грамм
+    print(f"--- {n}")
+    for ngram, count in sorted_ngrams[:50]:
+        print(" ".join(ngram), count)
