@@ -1,8 +1,4 @@
 <template>
-  <div class="demo-control-panel">
-    <el-input-number v-model="nodeCount" :min="3" :max="200" />
-  </div>
-
   <v-network-graph :zoom-level="0.5" :nodes="nodes" :edges="edges" :configs="configs" id="graph" />
 </template>
 
@@ -30,35 +26,40 @@ export default {
       },
       configs: vNG.defineConfigs({
         view: {
+          scalingObjects: true,
           layoutHandler: new ForceLayout({
             positionFixedByDrag: false,
             positionFixedByClickWithAltKey: true,
             createSimulation: (d3, nodes, edges) => {
               // d3-force parameters
               const forceLink = d3.forceLink(edges).id(d => d.id)
-              // return d3
-              //   .forceSimulation(nodes)
-              //   .force("edge", forceLink.distance(40).strength(0.5))
-              //   .force("charge", d3.forceManyBody().strength(-800))
-              //   .force("center", d3.forceCenter().strength(0.05))
-              //   .alphaMin(0.001)
+              return d3
+                .forceSimulation(nodes)
+                .force("edge", forceLink.distance(40).strength(0.5))
+                .force("charge", d3.forceManyBody().strength(-800))
+                .force("center", d3.forceCenter().strength(0.05))
+                .alphaMin(0.001)
 
               // * The following are the default parameters for the simulation.
               // const forceLink = d3.forceLink<ForceNodeDatum, ForceEdgeDatum>(edges).id(d => d.id)
-              return d3
-                .forceSimulation(nodes)
-                .force("edge", forceLink.distance(100))
-                .force("charge", d3.forceManyBody())
-                .force("collide", d3.forceCollide(50).strength(0.2))
-                .force("center", d3.forceCenter().strength(0.05))
-                .alphaMin(0.001)
+              // return d3
+              //   .forceSimulation(nodes)
+              //   .force("edge", forceLink.distance(100))
+              //   .force("charge", d3.forceManyBody())
+              //   .force("collide", d3.forceCollide(50).strength(0.5))
+              //   .force("center", d3.forceCenter().strength(0.05))
+              //   .alphaMin(0.001)
             }
           })
         },
         node: {
-          label: {
-            visible: false
-          }
+          // radius: node => node.size,
+          normal: {
+            type: "circle",
+            radius: node => node.size, // Use the value of each node object
+            color: node => node.color,
+          },
+
         }
       })
     }
