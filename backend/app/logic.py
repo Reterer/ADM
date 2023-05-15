@@ -5,8 +5,8 @@ from typing import List
 
 def score_vac(vac: models.Vacancy, user: models.User):
     tag_w = 1
-    rating_w = 0.1
-
+    rating_w = 0.5
+    print(user.activity_field, vac.activity_field)
     eq_tags = 0
     for tag in user.activity_field:
         if tag in vac.activity_field:

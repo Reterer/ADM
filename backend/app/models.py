@@ -54,8 +54,8 @@ def gen_vacancy_mock():
             ) = row
             text = ""
             tags = ""
-            activity_field = activity_field.split(",")
-            tags = tags.split(",")
+            activity_field = list(map(lambda x: x.strip(), activity_field.split(",")))
+            tags = list(map(lambda x: x.strip(), tags.split(",")))
             vacancy = Vacancy(
                 id=id,
                 city=city,
@@ -75,8 +75,11 @@ def gen_vacancy_mock():
 
 class User(BaseModel):
     id: str
+    # gender: str
+    # city: str
     activity_field: List[str]
+    # activity_field_contatcs: List[int]
 
 
 def gen_user_mock():
-    return User(id=0, activity_field=["Транспорт"])
+    return User(id=0, activity_field=["Транспорт", "студенты"])
