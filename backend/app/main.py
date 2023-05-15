@@ -18,7 +18,7 @@ app.add_middleware(
 # В общем хочу сделать ручку с запросом, и он выдает вакансии
 @app.get("/graph")
 def read_root():
-    nodes, edges = logic.generate_vac_graph(
+    nodes, edges, layouts = logic.generate_home_graph(
         models.gen_vacancy_mock(), models.gen_user_mock()
     )
-    return {"nodes": nodes, "edges": edges}
+    return {"nodes": nodes, "edges": edges, "layouts": layouts}

@@ -1,23 +1,29 @@
 import random
+import networkx as nx
 import models
+
+from pydantic import BaseModel
 from typing import List
 
 
-def score_vac(vac: models.Vacancy, user: models.User):
+class ScoredArgs(BaseModel):
+    activity_field: List[str]
+
+
+def score_vac(vac: models.Vacancy, score_agrs: ScoredArgs):
     tag_w = 1
     rating_w = 0.5
-    print(user.activity_field, vac.activity_field)
     eq_tags = 0
-    for tag in user.activity_field:
+    for tag in score_agrs.activity_field:
         if tag in vac.activity_field:
             eq_tags += 1
     score = eq_tags * tag_w + vac.rating * rating_w
     return score
 
 
-def sort_vacancies(vacancies, user):
-    res = sorted(vacancies, key=lambda vac: score_vac(vac, user), reverse=True)
-    scores = list(map(lambda v: score_vac(v, user), res))
+def sort_vacancies(vacancies, score_agrs: ScoredArgs):
+    res = sorted(vacancies, key=lambda vac: score_vac(vac, score_agrs), reverse=True)
+    scores = list(map(lambda v: score_vac(v, score_agrs), res))
     return res, scores
 
 
@@ -62,7 +68,6 @@ def generate_vac_graph(vacancies: List[models.Vacancy], user: models.User):
         curr_layer = []
 
     # Построили список смежности
-
     nodes = {str(i): {} for i in range(node_count)}
     nodes["0"]["name"] = f"user\n{user.activity_field}"
     nodes["0"]["size"] = 16
@@ -79,27 +84,90 @@ def generate_vac_graph(vacancies: List[models.Vacancy], user: models.User):
         for v in graph[q]:
             edges.append({"source": str(q), "target": str(v)})
     edges = {str(i): edges[i] for i in range(len(edges))}
+
     return nodes, edges
 
 
-# print(generate_vac_graph(models.gen_vacancy_mock(), models.gen_user_mock()))
+# [x] - 13:00 - Граф
+# [x] - 13:40 - Карточка
 
 
-# def generate_graph(node_count: int, edge_count: int):
-#     graph = [[] for i in range(node_count)]
+# Домашний граф
+def generate_home_graph(vacancies: List[models.Vacancy], user: models.User):
+    """
+    Я хочу показывать топ 3 кругляша. И уже относительно них строить несколько вакансий.
+    """
 
-#     for _ in range(edge_count):
-#         q, v = random.randint(0, node_count - 1), random.randint(0, node_count - 1)
-#         while q == v or (v in graph[q]):
-#             q, v = random.randint(0, node_count - 1), random.randint(0, node_count - 1)
+    # Определение сфер деятельности
+    activity_field = list(zip(user.activity_field, user.activity_field_contatcs))
+    activity_field = sorted(activity_field, key=lambda el: el[1], reverse=True)
 
-#         graph[q].append(v)
-#     print(graph)
-#     nodes = {str(i): {} for i in range(node_count)}
-#     edges = []
-#     for q in range(node_count):
-#         for v in graph[q]:
-#             edges.append({"source": str(q), "target": str(v)})
-#     print(edges)
-#     edges = {str(i): edges[i] for i in range(len(edges))}
-#     return nodes, edges
+    top_field = 3  # Количество кругляшей
+    top_vac_by_field = 5  # Количество вакасний по
+    print(user)
+    # Теперь нам нужно подобрать несколько релевантных вакансий под каждое поле
+    vacancies_field = []
+    vacancies_count = 0
+    for i in range(min(top_field, len(activity_field))):
+        vacancies_sorted, scores = sort_vacancies(
+            vacancies, ScoredArgs(activity_field=[activity_field[i][0]])
+        )
+        vacancies_sorted = vacancies_sorted[:top_vac_by_field]
+        scores = scores[:top_vac_by_field]
+        vacancies_field.append(zip(vacancies_sorted, scores))
+        vacancies_count += len(vacancies_sorted)
+
+    node_count = 1 + len(vacancies_field) + vacancies_count
+
+    # Строим список смежности
+    # 0 - user
+    # 1 .. top_field - кругляши
+    # top_field +1 ... - вакансии
+    graph = [[] for i in range(node_count)]
+    nodes = {str(i): {} for i in range(node_count)}
+
+    # user
+    nodes["0"]["name"] = f"user\n{user.activity_field}"
+    nodes["0"]["size"] = 20
+    nodes["0"]["color"] = "red"
+
+    # Добавим кругляши
+    for i in range(len(vacancies_field)):
+        graph[0].append(i + 1)
+        nodes[str(i + 1)][
+            "name"
+        ] = f"field: {activity_field[i][0]}\n clicks: {activity_field[i][1]}"
+        nodes[str(i + 1)]["size"] = 32 + activity_field[i][1]
+        nodes[str(i + 1)]["color"] = "pink"
+
+    # Добавим вакансии кругляшам
+    idx_vac = len(vacancies_field) + 1
+    idx_field = 1
+    for vacs in vacancies_field:
+        for vac in vacs:
+            graph[idx_field].append(idx_vac)
+            # Надо обработать вакансии
+            nodes[str(idx_vac)]["name"] = f"score: {vac[1]}\n {vac[0].activity_field}"
+            nodes[str(idx_vac)]["size"] = 16 + 2 * vac[0].rating ** 1.3
+            nodes[str(idx_vac)]["color"] = "skyblue"
+            idx_vac += 1
+        idx_field += 1
+
+    edges = []
+    nxe = []
+    for q in range(node_count):
+        for v in graph[q]:
+            edges.append({"source": str(q), "target": str(v)})
+            nxe.append((q, v))
+    edges = {str(i): edges[i] for i in range(len(edges))}
+
+    # Расчет позиции
+    nxG = nx.Graph(nxe)
+    pos = nx.spring_layout(nxG, scale=400)
+    # print(pos)
+    # Применение позиций
+    layouts = {}
+    layouts["nodes"] = {
+        str(i): {"x": pos[i][0], "y": pos[i][1]} for i in range(node_count)
+    }
+    return nodes, edges, layouts
