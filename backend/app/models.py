@@ -75,11 +75,17 @@ def gen_vacancy_mock():
 
 class User(BaseModel):
     id: str
-    # gender: str
-    # city: str
+    gender: str
+    city: str
     activity_field: List[str]
-    # activity_field_contatcs: List[int]
+    activity_field_contatcs: List[int]
 
 
 def gen_user_mock():
-    return User(id=0, activity_field=["Транспорт", "студенты"])
+    return User(
+        id=0,
+        gender="male",
+        city="Москва",
+        activity_field=["Транспорт", "студенты", "Такси"],
+        activity_field_contatcs=[5, 4, 3],
+    )

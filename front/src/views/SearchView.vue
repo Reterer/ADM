@@ -1,5 +1,14 @@
 <template>
-  <v-network-graph :zoom-level="0.5" :nodes="nodes" :edges="edges" :configs="configs" id="graph" />
+  <div class="tooltip-wrapper">
+    <v-network-graph :zoom-level="0.5" :nodes="nodes" :edges="edges" :configs="configs" :layouts="layouts"
+      :event-handlers="eventHandlers" id="graph" ref="graph" />
+    <!-- Tooltip -->
+    <div ref="tooltip" class="tooltip" :style="{ top: tooltipPos.y, left: tooltipPos.x, opacity: tooltipOpacity }">
+      <VacCard>
+        <div>{{ nodes[targetNodeId] }}</div>
+      </VacCard>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -9,6 +18,10 @@ import {
 } from "v-network-graph/lib/force-layout"
 
 import axios from 'axios'
+
+import VacCard from './../components/vacancies_card.vue'
+import { watch } from "vue"
+
 export default {
   data() {
     return {
@@ -27,6 +40,7 @@ export default {
       configs: vNG.defineConfigs({
         view: {
           scalingObjects: true,
+          minZoomLevel: 1,
           layoutHandler: new ForceLayout({
             positionFixedByDrag: false,
             positionFixedByClickWithAltKey: true,
@@ -53,7 +67,6 @@ export default {
           })
         },
         node: {
-          // radius: node => node.size,
           normal: {
             type: "circle",
             radius: node => node.size, // Use the value of each node object
@@ -61,33 +74,44 @@ export default {
           },
 
         }
-      })
+      }),
+      eventHandlers: {
+        "node:pointerover": ({ node }) => {
+          this.targetNodeId = node
+          this.tooltipOpacity = 1 // show
+          this.tooltipPos.x = this.layouts.nodes[this.targetNodeId.toString()].x
+          this.tooltipPos.y = this.layouts.nodes[this.targetNodeId.toString()].y
+
+          const domPoint = this.$refs.graph.translateFromSvgToDomCoordinates(this.tooltipPos)
+          this.tooltipPos.x = (domPoint.x + 50).toString() + "px"
+          this.tooltipPos.y = (domPoint.y - 200).toString() + "px"
+          console.log(this.tooltipPos)
+        },
+        "node:pointerout": _ => {
+          this.tooltipOpacity = 0 // hide
+        },
+      },
+      layouts: {},
+      tooltipPos: { x: "0px", y: "0px" },
+      tooltipOpacity: 1,
+      targetNodeId: 0,
     }
   },
   mounted() {
     axios
       .get('/graph')
-      .then(response => { this.nodes = response.data.nodes; this.edges = response.data.edges });
-  }
+      .then(response => { this.nodes = response.data.nodes; this.edges = response.data.edges; this.layouts = response.data.layouts });
+  },
+  components: {
+    VacCard,
+  },
 }
-
-
-// export default {
-//   data() {
-//     return {
-//       nodeCount: 10,
-//       nodes: {},
-//       edges: {},
-//     }
-//   },
-//   
-// }
 
 </script>
 <style>
 #graph {
-  width: 800px;
-  height: 600px;
+  width: 1000px;
+  height: 800px;
   border: 1px solid #000;
 }
 
@@ -97,5 +121,26 @@ export default {
     display: flex;
     align-items: center;
   }
+}
+
+.tooltip-wrapper {
+  position: relative;
+}
+
+.tooltip {
+  top: 0;
+  left: 0;
+  opacity: 0;
+  position: absolute;
+  min-width: 80px;
+  min-height: 36px;
+  padding: 10px;
+  text-align: center;
+  font-size: 12px;
+  background-color: #9c07ff;
+  border: 2px solid #ffb950;
+  box-shadow: 2px 2px 2px #aaa;
+  transition: opacity 0.2s linear;
+  pointer-events: none;
 }
 </style>
