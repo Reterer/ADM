@@ -12,7 +12,7 @@ class ScoredArgs(BaseModel):
 
 def score_vac(vac: models.Vacancy, score_agrs: ScoredArgs):
     tag_w = 1
-    rating_w = 0.5
+    rating_w = 0.1
     eq_tags = 0
     for tag in score_agrs.activity_field:
         if tag in vac.activity_field:
@@ -102,9 +102,9 @@ def generate_home_graph(vacancies: List[models.Vacancy], user: models.User):
     activity_field = list(zip(user.activity_field, user.activity_field_contatcs))
     activity_field = sorted(activity_field, key=lambda el: el[1], reverse=True)
 
-    top_field = 3  # Количество кругляшей
+    top_field = 5  # Количество кругляшей
     top_vac_by_field = 5  # Количество вакасний по
-    print(user)
+    # print(vacancies)
     # Теперь нам нужно подобрать несколько релевантных вакансий под каждое поле
     vacancies_field = []
     vacancies_count = 0
@@ -150,6 +150,7 @@ def generate_home_graph(vacancies: List[models.Vacancy], user: models.User):
             nodes[str(idx_vac)]["name"] = f"score: {vac[1]}\n {vac[0].activity_field}"
             nodes[str(idx_vac)]["size"] = 16 + 2 * vac[0].rating ** 1.3
             nodes[str(idx_vac)]["color"] = "skyblue"
+            nodes[str(idx_vac)]["vac_id"] = vac[0].id
             idx_vac += 1
         idx_field += 1
 

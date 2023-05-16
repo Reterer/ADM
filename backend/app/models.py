@@ -70,6 +70,10 @@ def gen_vacancy_mock():
                 text=text,
             )
             vacancies.append(vacancy)
+    # for vac in vacancies:
+    #     print(activity_field)
+    #     if "IT" in vac.activity_field:
+    #         print(vac)
     return vacancies
 
 
@@ -87,5 +91,5 @@ def gen_user_mock():
         gender="male",
         city="Москва",
         activity_field=["Транспорт", "студенты", "Такси"],
-        activity_field_contatcs=[5, 4, 3],
+        activity_field_contatcs=[5, 4, 3, 2],
     )
