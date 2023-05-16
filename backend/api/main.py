@@ -1,6 +1,6 @@
 from typing import Union
 from fastapi import FastAPI
-import models
+import models as models
 import logic
 from fastapi.middleware.cors import CORSMiddleware
 

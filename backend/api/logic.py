@@ -1,6 +1,6 @@
 import random
 import networkx as nx
-import models
+import models as models
 
 from pydantic import BaseModel
 from typing import List
@@ -86,10 +86,6 @@ def generate_vac_graph(vacancies: List[models.Vacancy], user: models.User):
     edges = {str(i): edges[i] for i in range(len(edges))}
 
     return nodes, edges
-
-
-# [x] - 13:00 - Граф
-# [x] - 13:40 - Карточка
 
 
 # Домашний граф
