@@ -70,10 +70,6 @@ def gen_vacancy_mock():
                 text=text,
             )
             vacancies.append(vacancy)
-    # for vac in vacancies:
-    #     print(activity_field)
-    #     if "IT" in vac.activity_field:
-    #         print(vac)
     return vacancies
 
 
