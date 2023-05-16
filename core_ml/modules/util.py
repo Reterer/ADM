@@ -4,6 +4,42 @@ Contains various utility functions for PyTorch model training and saving.
 """
 import torch
 from pathlib import Path
+import pandas as pd
+
+def max_length(df, column_name='Desrciption'):
+    """
+    Функция для определения максимальной длины строки в колонке датафрейма
+    
+    Параметры:
+    df (pandas.DataFrame): Датафрейм
+    column_name (str): Название колонки, для которой нужно определить максимальную длину
+    
+    Возвращает:
+    int: Максимальная длина строки в колонке датафрейма
+    """
+    max_len = 0
+    for text in df[column_name]:
+        if len(text) > max_len:
+            max_len = len(text)
+    return max_len
+
+def truncate(df, length, column_name='Desrciption'):
+    """
+    Функция для обрезания всех значений в колонке датафрейма до заданной длины
+    
+    Параметры:
+    df (pandas.DataFrame): Датафрейм
+    column_name (str): Название колонки, которую нужно обрезать
+    length (int): Длина, до которой нужно обрезать строки
+    
+    Возвращает:
+    pandas.DataFrame: Датафрейм с обрезанными строками в колонке
+    """
+    df_truncated = df.copy()
+    df_truncated[column_name] = df_truncated[column_name].apply(lambda x: x[:length])
+    return df_truncated
+
+
 
 def save_model(model: torch.nn.Module,
                target_dir: str,
