@@ -5,9 +5,21 @@ import models as models
 from pydantic import BaseModel
 from typing import List
 
+import rpyc
+
 
 class ScoredArgs(BaseModel):
     activity_field: List[str]
+
+
+def get_home_vacs(user_id: int, vac_number: int):
+    print("hello")
+    conn = rpyc.connect("localhost", port=18811)
+    print(conn.root.get_home_vac(user_id, vac_number))
+    pass
+
+
+print(get_home_vacs(8708761300796322428, 15))
 
 
 def score_vac(vac: models.Vacancy, score_agrs: ScoredArgs):

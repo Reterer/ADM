@@ -18,13 +18,11 @@ data, seekers_df, vacancies_df = data_setup.read_data()
 # recommendations
 
 # Подготовка данных для использования в алгоритме cosine distance
-features = list(data_useful.columns)[3:4] + list(data_useful.columns)[6:10] + list(data_useful.columns)[11:]
 # for feature in features:
 #     data_useful[feature] = pd.Categorical(data_useful[feature]).codes
 
 
 while 1:
-	%%time
-	# read seeker_id_hash and n_vacancies
-	engine.relevant_vacancies = get_top_n_recommendations(seeker_id_hash, n_vacancies)
-	vacancies_df.set_index('VacancyIdHashed').loc[relevant_vacancies].reset_index()
+    # read seeker_id_hash and n_vacancies
+    engine.relevant_vacancies = get_top_n_recommendations(seeker_id_hash, n_vacancies)
+    vacancies_df.set_index("VacancyIdHashed").loc[relevant_vacancies].reset_index()
