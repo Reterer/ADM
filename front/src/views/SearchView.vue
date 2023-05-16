@@ -93,7 +93,7 @@ export default {
       },
       layouts: {},
       tooltipPos: { x: "0px", y: "0px" },
-      tooltipOpacity: 1,
+      tooltipOpacity: 0,
       targetNodeId: 0,
     }
   },
