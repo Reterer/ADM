@@ -17,7 +17,7 @@ import math
 
 
 def get_home_vacs(user_id: int, vac_number: int):
-    conn = rpyc.connect("localhost", port=18811)
+    conn = rpyc.connect("10.5.0.3", port=18811)
     res = conn.root.get_home_vac(user_id, vac_number)
     vacs = []
     for row in res:
