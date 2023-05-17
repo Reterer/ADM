@@ -8,6 +8,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@types/markdown-it": "^12.2.3",
     "axios": "^1.4.0",
     "d3-force": "^3.0.0",
     "element-plus": "^2.3.4",

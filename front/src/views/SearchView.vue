@@ -18,7 +18,6 @@ import {
 } from "v-network-graph/lib/force-layout"
 
 import axios from 'axios'
-
 import VacCard from './../components/vacancies_card.vue'
 import { watch } from "vue"
 
@@ -35,20 +34,20 @@ export default {
         view: {
           scalingObjects: true,
           minZoomLevel: 1,
-          // layoutHandler: new ForceLayout({
-          //   positionFixedByDrag: false,
-          //   positionFixedByClickWithAltKey: true,
-          //   createSimulation: (d3, nodes, edges) => {
-          //     // d3-force parameters
-          //     const forceLink = d3.forceLink(edges).id(d => d.id)
-          //     return d3
-          //       .forceSimulation(nodes)
-          //       .force("edge", forceLink.distance(70).strength(0.2))
-          //       .force("charge", d3.forceManyBody().strength(-30))
-          //       .force("center", d3.forceCenter().strength(0.05))
-          //       .alphaMin(0.001)
-          //   }
-          // })
+          layoutHandler: new ForceLayout({
+            positionFixedByDrag: false,
+            positionFixedByClickWithAltKey: true,
+            createSimulation: (d3, nodes, edges) => {
+              // d3-force parameters
+              const forceLink = d3.forceLink(edges).id(d => d.id)
+              return d3
+                .forceSimulation(nodes)
+                .force("edge", forceLink.distance(20).strength(0.5))
+                .force("charge", d3.forceManyBody().strength(-800))
+                .force("center", d3.forceCenter().strength(0.05))
+                .alphaMin(0.001)
+            }
+          })
         },
         node: {
           normal: {
@@ -121,14 +120,6 @@ export default {
   width: 1000px;
   height: 800px;
   border: 1px solid #000;
-}
-
-@media (min-width: 1024px) {
-  .about {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-  }
 }
 
 .tooltip-wrapper {

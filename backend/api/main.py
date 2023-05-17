@@ -30,6 +30,7 @@ class SummorizeData(BaseModel):
 
 @app.post("/summorize")
 async def summorize(data: SummorizeData):
-    text = data.text[: min(len(data.text), 450)]
-    # text = ft.summaryVacancy(data.text)
+    text = data.text
+    text = ft.summaryVacancy(data.text)
+    text = text[: min(len(text), 450)]
     return {"text": text}

@@ -140,7 +140,7 @@ def generate_home_graph(user: models.User):
     # activity_field = list(zip(user.activity_field, user.activity_field_contatcs))
     # activity_field = sorted(activity_field, key=lambda el: el[1], reverse=True)
     top_field = 5  # Количество кругляшей
-    top_vac_by_field = 12  # Количество вакасний по
+    top_vac_by_field = 8  # Количество вакасний по
 
     activity_field = []
     for vac in vacancies:
@@ -191,11 +191,12 @@ def generate_home_graph(user: models.User):
     idx_vac = len(vacancies_field) + 1
     idx_field = 1
     for vacs in vacancies_field:
-        for vac in vacs:
+        for j in range(len(vacs)):
+            vac = vacs[j]
             graph[idx_field].append(idx_vac)
             # Надо обработать вакансии
             nodes[str(idx_vac)]["name"] = f"{vac.activity_field}"
-            nodes[str(idx_vac)]["size"] = 24
+            nodes[str(idx_vac)]["size"] = 24 + (len(vacs) - j) ** 1.3
 
             color = ""
             if vac.rating <= 2:
@@ -215,56 +216,56 @@ def generate_home_graph(user: models.User):
         idx_field += 1
 
     edges = []
-    # nxe = []
+    nxe = []
     for q in range(node_count):
         for v in graph[q]:
             edges.append({"source": str(q), "target": str(v)})
-            # nxe.append((q, v))
+            nxe.append((q, v))
     edges = {str(i): edges[i] for i in range(len(edges))}
 
     # Расчет позиции
-    # nxG = nx.Graph(nxe)
-    # pos = nx.spring_layout(nxG, scale=400)
+    nxG = nx.Graph(nxe)
+    pos = nx.spring_layout(nxG, scale=300)
     # print(pos)
     # Применение позиций
 
     # Можно сделать расчет позиций
-    scale = 1
-    dist_field = 240
-    dist_vac = 100
-    diviation = 2
-    pos = [(0, 0) for i in range(len(nodes))]
+    # scale = 1
+    # dist_field = 240
+    # dist_vac = 100
+    # diviation = 2
+    # pos = [(0, 0) for i in range(len(nodes))]
 
-    # Будем по кругу считать
-    def gen_pos(dist, count, deviation):
-        coordinates = []
-        angle = 2 * math.pi / count  # Вычисляем угол между каждой цифрой
-        for i in range(count):
-            x = dist * math.cos(i * angle) * scale  # Вычисляем x-координату
-            y = dist * math.sin(i * angle) * scale  # Вычисляем y-координату
+    # # Будем по кругу считать
+    # def gen_pos(dist, count, deviation):
+    #     coordinates = []
+    #     angle = 2 * math.pi / count  # Вычисляем угол между каждой цифрой
+    #     for i in range(count):
+    #         x = dist * math.cos(i * angle) * scale  # Вычисляем x-координату
+    #         y = dist * math.sin(i * angle) * scale  # Вычисляем y-координату
 
-            # Добавляем случайное отклонение к координатам
-            x += random.uniform(-deviation, deviation)
-            y += random.uniform(-deviation, deviation)
+    #         # Добавляем случайное отклонение к координатам
+    #         x += random.uniform(-deviation, deviation)
+    #         y += random.uniform(-deviation, deviation)
 
-            coordinates.append((x, y))
-        return coordinates
+    #         coordinates.append((x, y))
+    #     return coordinates
 
-    idx_vac = 1 + len(vacancies_field)
-    # Сферы
-    field_pos = gen_pos(dist_field, len(vacancies_field), diviation)
-    for i in range(len(vacancies_field)):
-        pos[i + 1] = (field_pos[i][0], field_pos[i][1])
+    # idx_vac = 1 + len(vacancies_field)
+    # # Сферы
+    # field_pos = gen_pos(dist_field, len(vacancies_field), diviation)
+    # for i in range(len(vacancies_field)):
+    #     pos[i + 1] = (field_pos[i][0], field_pos[i][1])
 
-        # Для каждой сферы считаем ее вакансии
-        vac_pos = gen_pos(dist_vac, len(vacancies_field[i]), diviation)
-        field_center = pos[i + 1]
-        for j in range(len(vacancies_field[i])):
-            pos[idx_vac] = (
-                field_center[0] + vac_pos[j][0],
-                field_center[1] + vac_pos[j][1],
-            )
-            idx_vac += 1
+    #     # Для каждой сферы считаем ее вакансии
+    #     vac_pos = gen_pos(dist_vac, len(vacancies_field[i]), diviation)
+    #     field_center = pos[i + 1]
+    #     for j in range(len(vacancies_field[i])):
+    #         pos[idx_vac] = (
+    #             field_center[0] + vac_pos[j][0],
+    #             field_center[1] + vac_pos[j][1],
+    #         )
+    #         idx_vac += 1
 
     print(pos)
     layouts = {}
