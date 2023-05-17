@@ -1,43 +1,40 @@
-import pandas as pd
-from collections import Counter
-from nltk import ngrams, word_tokenize
-import nltk
-
-import re
 import math
 
-nltk.download("punkt")
-# Загружаем данные из CSV-файла
-df = pd.read_csv("vacancies.csv")
-df = df[df.job_name == "Водитель"]
 
-# Удаляем строки с пустым значением в поле duty
-df = df.dropna(subset=["requirement_qualification"])
-df.drop_duplicates(subset=["requirement_qualification"], inplace=True)
+def calculate_digit_coordinates(num_digits, distance):
+    coordinates = []
+    angle = 2 * math.pi / num_digits  # Вычисляем угол между каждой цифрой
 
+    for i in range(num_digits):
+        x = distance * math.cos(i * angle) * 5  # Вычисляем x-координату
+        y = distance * math.sin(i * angle) * 5  # Вычисляем y-координату
+        coordinates.append((x, y))
 
-# Обработка текстового поля duty
-def clean_text(text):
-    text = re.sub(r"[^а-яА-ЯёЁ\s]", "", text)  # Удаляем знаки препинания
-    text = text.lower()  # Приводим к нижнему регистру
-    return text
+    return coordinates
 
 
-df["requirement_qualification"] = df["requirement_qualification"].apply(clean_text)
+# Пример использования функции
+num_digits = 5
+distance = 1
+digit_coordinates = calculate_digit_coordinates(num_digits, distance)
 
-# Создаем список из токенов
-token_list = [word_tokenize(duty) for duty in df["requirement_qualification"]]
+# Вывод координат цифр
+for i, coord in enumerate(digit_coordinates):
+    print(f"Координаты цифры {i+1}: {coord}")
 
-for n in range(1, 4):
-    # Создаем n-граммы
-    ngram_list = [ngrams(token, n) for token in token_list]
 
-    # Считаем частотность n-грамм
-    ngram_counter = Counter([ngram for ngrams in ngram_list for ngram in ngrams])
+import matplotlib.pyplot as plt
 
-    sorted_ngrams = sorted(ngram_counter.items(), key=lambda x: x[1], reverse=True)
+# Разделение координат на отдельные списки для x и y
+x_coords = [coord[0] for coord in digit_coordinates]
+y_coords = [coord[1] for coord in digit_coordinates]
 
-    # Выводим топ-10 n-грамм
-    print(f"--- {n}")
-    for ngram, count in sorted_ngrams[:50]:
-        print(" ".join(ngram), count)
+# Создание графика
+plt.scatter(x_coords, y_coords)
+plt.axis("equal")  # Сделать оси равными для правильного отображения
+plt.xlabel("X")
+plt.ylabel("Y")
+plt.title("Координаты цифр на циферблате")
+
+# Показать график
+plt.show()

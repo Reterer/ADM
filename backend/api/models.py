@@ -17,64 +17,8 @@ class Vacancy(BaseModel):
     text: str
 
 
-def gen_vacancy_mock():
-    default_values = {
-        "SferaDeyatelnosti": "",
-        "GrafikRaboty": "unknown",
-        "Professiya": "unknown",
-        "Price": "0",
-        "EmployerRating": "0",
-        "Views": "0",
-        "Contacts": "0",
-        "tags": "",
-        "text": "",
-    }
-
-    vacancies = []
-    with open("vac_mock.csv", newline="") as csvfile:
-        reader = csv.reader(csvfile, delimiter=",", quotechar='"')
-        headers = next(reader)  # получаем заголовки
-
-        for row in reader:
-            # заменяем пропущенные значения на значения по умолчанию
-            for i in range(len(row)):
-                if row[i].strip() == "":
-                    row[i] = default_values.get(headers[i], "")
-            (
-                _,
-                id,
-                city,
-                activity_field,
-                schedule,
-                employment,
-                price,
-                rating,
-                views,
-                contacts,
-            ) = row
-            text = ""
-            tags = ""
-            activity_field = list(map(lambda x: x.strip(), activity_field.split(",")))
-            tags = list(map(lambda x: x.strip(), tags.split(",")))
-            vacancy = Vacancy(
-                id=id,
-                city=city,
-                activity_field=activity_field,
-                schedule=schedule,
-                employment=employment,
-                price=int(float(price)),
-                rating=int(float(rating)),
-                views=int(views),
-                contacts=int(contacts),
-                tags=tags,
-                text=text,
-            )
-            vacancies.append(vacancy)
-    return vacancies
-
-
 class User(BaseModel):
-    id: str
+    id: int
     gender: str
     city: str
     activity_field: List[str]
@@ -83,9 +27,14 @@ class User(BaseModel):
 
 def gen_user_mock():
     return User(
-        id=0,
+        id=8708761300796322428,
         gender="male",
         city="Москва",
-        activity_field=["Транспорт", "студенты", "Такси"],
+        activity_field=[
+            "IT, интернет, телеком",
+            "Без опыта, студенты",
+            "Продажи",
+            "Строительство",
+        ],
         activity_field_contatcs=[5, 4, 3, 2],
     )
