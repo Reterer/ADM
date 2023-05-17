@@ -44,6 +44,7 @@ https://platform.openai.com/docs/api-reference/models/list) для состав�
 Описание backend-отделения и используемых технологий:
 
 - FastAPI для создания API
+- RPYC для общения с узлом search
 
 ### frontend
 
@@ -53,17 +54,21 @@ https://platform.openai.com/docs/api-reference/models/list) для состав�
 
 ## Установка и запуск
 
-[Запуск проекта с docker](https://r.mtdv.me/articles/docker_run)
-
+1. Добавить токены в api_summorize_config.py
+2. Добавить данные с пользователями и вакансиями в корневую папку data
+3. Запустить docker compose: docker compose up
+4. Доступ к фронтенду можно получить по адрессу http://10.5.0.2:5173/search
+   
+   
 ## Разработчики
 
-| Github       | Telegram                     | Роль       |
-|-----------|------------------------------------|--------------|
-| [BabitOleg](https://r.mtdv.me/articles/docker_run) | @Windicor |  Team Lead |
-| [Reterer](https://github.com/Reterer) | @EgorSukhanov | Backend, Frontend |
-| [Suraba03](https://github.com/suraba03) | @suraba03 | ML engineer|
-| [Gorgeren](https://github.com/Gorgeren) | @Noyesy | ML engineer |
-| [Horya](https://r.mtdv.me/articles/docker_run) | @hrum_horya | UX researcher|
+| Github                                             | Telegram      | Роль              |
+| -------------------------------------------------- | ------------- | ----------------- |
+| [BabitOleg](https://r.mtdv.me/articles/docker_run) | @Windicor     | Team Lead         |
+| [Reterer](https://github.com/Reterer)              | @EgorSukhanov | Backend, Frontend |
+| [Suraba03](https://github.com/suraba03)            | @suraba03     | ML engineer       |
+| [Gorgeren](https://github.com/Gorgeren)            | @Noyesy       | ML engineer       |
+| [Horya](https://r.mtdv.me/articles/docker_run)     | @hrum_horya   | UX researcher     |
 
 
 ## Лицензия
