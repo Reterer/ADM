@@ -1,9 +1,13 @@
 import data_setup
-import gc
+import math
+import models
+from typing import List
 from sklearn.metrics.pairwise import cosine_similarity
 
 
 # Функция для нахождения топ n рекомендаций для заданного соискателя
+
+
 def get_top_n_recommendations(
     seeker_id,
     n,
@@ -30,4 +34,23 @@ def get_top_n_recommendations(
     print("После обрезки")
     top_n_recommendations = vacancy_data.iloc[top_n_indices]["VacancyIdHashed"]
     print("Топ н рекомендаций")
-    return top_n_recommendations.tolist()
+    top_n_recommendations = list(set(top_n_recommendations.tolist()))
+    return top_n_recommendations
+
+
+def get_vacs_by_idx(vac_id_list: List[int]):
+    vacs_list = (
+        data_setup.vacancies_df.set_index("VacancyIdHashed")
+        .loc[vac_id_list]
+        .reset_index()
+    )
+
+    print(vacs_list)
+    print(vacs_list.shape)
+    res = []
+    for row in vacs_list.iterrows():
+        _ = row[0]
+        row = row[1]
+        res.append(row)
+
+    return res

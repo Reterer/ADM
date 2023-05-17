@@ -4,9 +4,9 @@
       :event-handlers="eventHandlers" id="graph" ref="graph" />
     <!-- Tooltip -->
     <div ref="tooltip" class="tooltip" :style="{ top: tooltipPos.y, left: tooltipPos.x, opacity: tooltipOpacity }">
-      <VacCard>
-        <div>{{ nodes[targetNodeId] }}</div>
-      </VacCard>
+      <VacCard :raw_text="nodes[targetNodeId]" :desc="nodes[targetNodeId].small_text" />
+      <!-- <div>{{ nodes[targetNodeId] }}</div> -->
+      <!-- </VacCard> -->
     </div>
   </div>
 </template>
@@ -26,35 +26,29 @@ export default {
   data() {
     return {
       nodes: {
-        1: { name: "Node 1" },
-        2: { name: "Node 2" },
-        3: { name: "Node 3" },
-        4: { name: "Node 4" },
+        0: { name: "user", small_text: "" },
       }
       ,
       edges: {
-        1: { source: "1", target: "2" },
-        2: { source: "2", target: "3" },
-        3: { source: "3", target: "4" },
       },
       configs: vNG.defineConfigs({
         view: {
           scalingObjects: true,
           minZoomLevel: 1,
-          layoutHandler: new ForceLayout({
-            positionFixedByDrag: false,
-            positionFixedByClickWithAltKey: true,
-            createSimulation: (d3, nodes, edges) => {
-              // d3-force parameters
-              const forceLink = d3.forceLink(edges).id(d => d.id)
-              return d3
-                .forceSimulation(nodes)
-                .force("edge", forceLink.distance(40).strength(0.5))
-                .force("charge", d3.forceManyBody().strength(-800))
-                .force("center", d3.forceCenter().strength(0.05))
-                .alphaMin(0.001)
-            }
-          })
+          // layoutHandler: new ForceLayout({
+          //   positionFixedByDrag: false,
+          //   positionFixedByClickWithAltKey: true,
+          //   createSimulation: (d3, nodes, edges) => {
+          //     // d3-force parameters
+          //     const forceLink = d3.forceLink(edges).id(d => d.id)
+          //     return d3
+          //       .forceSimulation(nodes)
+          //       .force("edge", forceLink.distance(70).strength(0.2))
+          //       .force("charge", d3.forceManyBody().strength(-30))
+          //       .force("center", d3.forceCenter().strength(0.05))
+          //       .alphaMin(0.001)
+          //   }
+          // })
         },
         node: {
           normal: {
@@ -63,10 +57,34 @@ export default {
             color: node => node.color,
           },
 
-        }
+        },
+        edge: {
+          normal: {
+            width: 0,
+          },
+          hover: {
+            width: 0,
+          }
+        },
       }),
       eventHandlers: {
         "node:pointerover": ({ node }) => {
+          if (this.nodes[node.toString()].small_text == "") {
+            console.log("Hello")
+            axios({
+              method: 'post',
+              responseType: 'json',
+              url: '/summorize',
+              data: {
+                text: this.nodes[node.toString()].text,
+              },
+            })
+              // axios
+              //   .post('/summorize', {
+              //     text: this.nodes[node.toString()].text,
+              //   })
+              .then(response => { this.nodes[node.toString()].small_text = response.data.text });
+          };
           this.targetNodeId = node
           this.tooltipOpacity = 1 // show
           this.tooltipPos.x = this.layouts.nodes[this.targetNodeId.toString()].x

@@ -3,3 +3,6 @@
 *.json
 experimental
 data
+venv
+__pycache__
+config.py

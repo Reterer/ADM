@@ -4,7 +4,7 @@ import csv
 
 
 class Vacancy(BaseModel):
-    id: str
+    id: int
     city: str
     activity_field: List[str]
     schedule: str
