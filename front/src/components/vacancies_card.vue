@@ -3,6 +3,7 @@
     <div class=card>
         <p>This is just card.</p><br>
         {{ desc }}
+        <!-- <VueMarkdown :source="desc" /> -->
     </div>
     <div class="debug">
         <!-- {{ raw_text }} -->
@@ -10,6 +11,7 @@
 </template>
 
 <script>
+
 export default {
     data() {
         return {
@@ -18,7 +20,7 @@ export default {
     props: {
         raw_text: String,
         desc: String,
-    }
+    },
 }
 </script>
 
