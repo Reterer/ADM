@@ -13,7 +13,8 @@
 
 #### Улучшение читаемости текста вакансии (проблема 1)
   
-[Код решения](https://github.com/Reterer/ADM/blob/documentation-Gorg/backend/api/summorize/fortest.py). Использование ChatGpt API для составления краткой карточки вакансии. Используем Yandex Cloud API для перевода текста с русского на английский для создание запроса к ChatGpt и для перевода запроса на русский. 
+[Код решения](https://github.com/Reterer/ADM/blob/documentation-Gorg/backend/api/summorize/fortest.py). Использование [ChatGPT API](  
+https://platform.openai.com/docs/api-reference/models/list) для составления краткой карточки вакансии. Используем [Yandex Cloud API](https://cloud.yandex.ru/docs/translate/) для перевода текста с русского на английский для создание запроса к ChatGpt и для перевода запроса на русский. 
 
 #### Учет истории контактов для персонализированных рекомендаций (проблема 4)
  
@@ -42,24 +43,29 @@
 
 Описание backend-отделения и используемых технологий:
 
-- Использование FastAPI для создания API
-- Другие используемые технологии, фреймворки или инструменты
+- FastAPI для создания API
 
 ### frontend
 
 Описание frontend-отделения и используемых технологий:
 
-- Использование Vue.js для разработки пользовательского интерфейса
-- Другие используемые технологии, фреймворки или инструменты
+- Vue.js для разработки пользовательского интерфейса
 
 ## Установка и запуск
 
-Подробные инструкции о том, как установить и запустить проект. Включите команды и зависимости, если таковые имеются.
+[Запуск проекта с docker](https://r.mtdv.me/articles/docker_run)
 
 ## Разработчики
 
-Укажите информацию о разработчиках проекта, включая ссылки на их профили на GitHub или другие платформы.
+| Github       | Telegram                     | Роль       |
+|-----------|------------------------------------|--------------|
+| [BabitOleg](https://r.mtdv.me/articles/docker_run) | @Windicor |  Team Lead |
+| [Reterer](https://github.com/Reterer) | @EgorSukhanov | Backend, Frontend |
+| [Suraba03](https://github.com/suraba03) | @suraba03 | ML engineer|
+| [Gorgeren](https://github.com/Gorgeren) | @Noyesy | ML engineer |
+| [Horya](https://r.mtdv.me/articles/docker_run) | @hrum_horya | UX researcher|
+
 
 ## Лицензия
 
-Укажите информацию о лицензии, под которой распространяется проект.
+### [Licence](https://r.mtdv.me/articles/docker_run)
