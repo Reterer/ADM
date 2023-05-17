@@ -1,9 +1,7 @@
 <template>
     <link href="https://fonts.googleapis.com/css?family=Inter&display=swap" rel="stylesheet">
     <div class=card>
-        <p>This is just card.</p><br>
-        {{ desc }}
-        <!-- <VueMarkdown :source="desc" /> -->
+        <div v-html="desc"></div>
     </div>
     <div class="debug">
         <!-- {{ raw_text }} -->
@@ -31,7 +29,7 @@ export default {
 }
 
 .card {
-    font-size: 16px;
+    font-size: 12px;
     text-align: left;
     padding: 10px;
     float: left;
